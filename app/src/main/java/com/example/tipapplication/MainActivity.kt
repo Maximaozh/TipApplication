@@ -57,6 +57,16 @@ class AppState {
     var percentage by mutableStateOf(0f);
 
     var disccountOptions: List<Int> = listOf(3,5,7,10);
+
+    fun updateDiscount() {
+        val count = numberOfDishes.toFloatOrNull() ?: 0f
+        selectedDiscountRadioButton = when {
+            count <= 2f -> 3f
+            count <= 5f -> 5f
+            count <= 10f -> 7f
+            else -> 10f
+        }
+    }
 }
 
 @Composable
@@ -99,7 +109,8 @@ fun NumberOfDishesInputField(state: AppState) {
             value = state.numberOfDishes,
             onValueChange = { newText ->
                 if (newText.all { it.isDigit() } || newText.isEmpty()) {
-                    state.numberOfDishes = newText
+                    state.numberOfDishes = newText;
+                    state.updateDiscount();
                 }
             },
             label = { Text("Введите число") },
@@ -122,6 +133,7 @@ fun PercentageSlider(state: AppState) {
                 state.percentage = newValue
             },
             valueRange = 0f..25f,
+            steps = 24,
             modifier = Modifier.fillMaxWidth()
         )
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -167,7 +179,16 @@ fun DiscountRadioButtons(state: AppState) {
 
 @Composable
 fun ResultTextField(state: AppState) {
+    val price = state.priceOfOrder.toFloatOrNull() ?: 0f
+    val discountPercent = state.selectedDiscountRadioButton
+    val priceWithDiscount = price * (1f - discountPercent / 100f)
+    val tips = priceWithDiscount * state.percentage / 100f
+    val total = tips + priceWithDiscount
 
+    Text(
+        text = "Итого: %.2f, Чаевые: %.2f".format(total, tips),
+        modifier = Modifier.padding(16.dp)
+    )
 }
 
 @Preview
