@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -52,8 +53,7 @@ class MainActivity : ComponentActivity() {
 class AppState {
     var priceOfOrder by mutableStateOf("");
     var numberOfDishes by mutableStateOf("");
-    var selectedDiscountRadioButton by mutableStateOf("");
-
+    var selectedDiscountRadioButton by mutableStateOf(0f);
     var percentage by mutableStateOf(0f);
 
     var disccountOptions: List<Int> = listOf(3,5,7,10);
@@ -141,7 +141,28 @@ fun PercentageSlider(state: AppState) {
 
 @Composable
 fun DiscountRadioButtons(state: AppState) {
+    Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
 
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = CenterVertically
+        ) {
+            Text(
+                text = "Скидка"
+            )
+            state.disccountOptions.forEach { discount ->
+                Row(
+                    verticalAlignment = CenterVertically
+                ) {
+                    RadioButton(
+                        selected = state.selectedDiscountRadioButton == discount.toFloat(),
+                        onClick = { /* Не даем пользователю выбрать */ }
+                    )
+                    Text(text = "$discount%")
+                }
+            }
+        }
+    }
 }
 
 @Composable
